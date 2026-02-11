@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AdminUsersService } from '../../data/admin-users.service';
-import { UserResponse } from '../../../../shared/models/user.model';
+import { UserResponse, UserRole } from '../../../../shared/models/user.model';
 
 @Component({
   selector: 'app-admin-pending-users',
@@ -11,11 +11,26 @@ import { UserResponse } from '../../../../shared/models/user.model';
 })
 export class AdminPendingUsersComponent implements OnInit {
   users$!: Observable<UserResponse[]>;
+  selectedRole: UserRole = 'BIP_CLIENTE';
 
   constructor(private readonly adminUsers: AdminUsersService) {}
 
   ngOnInit(): void {
-    this.users$ = this.adminUsers.listPendingUsers();
+    this.reload();
+  }
+
+  onRoleChange(role: string): void {
+    if (role === 'BIP_CLIENTE' || role === 'BIP_ENTREGADOR' || role === 'BIP_ADMIN') {
+      this.selectedRole = role;
+    } else {
+      this.selectedRole = 'BIP_CLIENTE';
+    }
+
+    this.reload();
+  }
+
+  private reload(): void {
+    this.users$ = this.adminUsers.listPendingUsersByRole(this.selectedRole);
   }
 
   approve(user: UserResponse): void {
@@ -27,7 +42,7 @@ export class AdminPendingUsersComponent implements OnInit {
 
     this.adminUsers.approveUser(user.id).subscribe({
       next: () => {
-        this.users$ = this.adminUsers.listPendingUsers();
+        this.reload();
       },
       error: () => {
         alert('Não foi possível aprovar o usuário. Tente novamente.');
@@ -44,7 +59,7 @@ export class AdminPendingUsersComponent implements OnInit {
 
     this.adminUsers.rejectUser(user.id).subscribe({
       next: () => {
-        this.users$ = this.adminUsers.listPendingUsers();
+        this.reload();
       },
       error: () => {
         alert('Não foi possível rejeitar o usuário. Tente novamente.');
