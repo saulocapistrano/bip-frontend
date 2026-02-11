@@ -1,0 +1,93 @@
+<div class="client-main">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">{{ title }}</h2>
+
+    <button type="button" class="btn btn-outline-primary btn-sm">
+      Perfil
+    </button>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-4" *ngFor="let card of summaryCards">
+      <div class="client-summary-card" [ngClass]="card.colorClass">
+        <p class="client-summary-card__label">{{ card.label }}</p>
+        <h3 class="client-summary-card__value">{{ card.value }}</h3>
+        <p class="client-summary-card__hint" *ngIf="card.hint">
+          {{ card.hint }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <section aria-labelledby="last-deliveries-title">
+    <h3 id="last-deliveries-title" class="client-section-title">
+      Últimas entregas
+    </h3>
+
+    <div class="client-deliveries" *ngIf="!loading; else loadingTpl">
+      <div
+        *ngIf="deliveries.length === 0"
+        class="alert alert-light border text-muted"
+      >
+        Nenhuma entrega encontrada.
+      </div>
+
+      <div
+        *ngFor="let delivery of deliveries"
+        class="client-delivery-row"
+        role="button"
+      >
+        <div class="client-delivery-row__main">
+          <div>
+            <div class="client-delivery-row__title">
+              {{ delivery.description }}
+            </div>
+            <div class="client-delivery-row__addresses">
+              <span class="text-muted">De:</span> {{ delivery.pickupAddress }}
+              <span class="mx-2">→</span>
+              <span class="text-muted">Para:</span> {{ delivery.deliveryAddress }}
+            </div>
+          </div>
+        </div>
+
+        <div class="client-delivery-row__meta text-end">
+          <div class="client-delivery-row__price">
+            {{ delivery.offeredPrice | currency : 'BRL' : 'symbol' : '1.2-2' }}
+          </div>
+          <span
+            class="badge client-delivery-row__status"
+            [ngClass]="statusBadgeClass[delivery.status]"
+          >
+            {{ delivery.statusLabel }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #loadingTpl>
+      <div class="text-center text-muted py-4">Carregando entregas...</div>
+    </ng-template>
+
+    <nav
+      class="client-pagination d-flex justify-content-center align-items-center mt-3"
+      *ngIf="totalPages > 1"
+      aria-label="Paginação de entregas"
+    >
+      <button
+        class="btn btn-sm btn-outline-secondary me-2"
+        [disabled]="!hasPrevious()"
+        (click)="onPageChange(currentPage - 1)"
+      >
+        Anterior
+      </button>
+      <span class="mx-2">Página {{ currentPage }} de {{ totalPages }}</span>
+      <button
+        class="btn btn-sm btn-outline-secondary ms-2"
+        [disabled]="!hasNext()"
+        (click)="onPageChange(currentPage + 1)"
+      >
+        Próxima
+      </button>
+    </nav>
+  </section>
+</div>

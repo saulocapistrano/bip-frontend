@@ -1,1 +1,9 @@
-<p>client-home works!</p>
+<app-deliveries-dashboard
+  [title]="'Minhas entregas'"
+  [summaryCards]="summaryCards"
+  [deliveries]="deliveries"
+  [currentPage]="currentPage"
+  [totalPages]="totalPages"
+  [loading]="loading"
+  [onPageChange]="onPageChange.bind(this)"
+></app-deliveries-dashboard>
