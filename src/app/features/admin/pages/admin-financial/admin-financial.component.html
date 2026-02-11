@@ -1,6 +1,192 @@
-<div class="card border-0 shadow-sm">
-  <div class="card-body">
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
     <h2 class="h5 mb-1">Relatório financeiro</h2>
-    <p class="text-muted mb-0">Página em construção.</p>
+    <p class="text-muted mb-0">Visão consolidada por período e transações.</p>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-3">
+  <div class="card-body">
+    <div class="row g-3 align-items-end">
+      <div class="col-12 col-md-4 col-lg-3">
+        <label class="form-label">Período</label>
+        <select class="form-select" [(ngModel)]="periodPreset" (ngModelChange)="onPresetChange()">
+          <option [ngValue]="'TODAY'">Hoje</option>
+          <option [ngValue]="'LAST_7_DAYS'">Últimos 7 dias</option>
+          <option [ngValue]="'LAST_30_DAYS'">Últimos 30 dias</option>
+          <option [ngValue]="'CUSTOM'">Personalizado</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-4 col-lg-3" *ngIf="periodPreset === 'CUSTOM'">
+        <label class="form-label">Data inicial</label>
+        <input class="form-control" type="date" [(ngModel)]="startDate" />
+      </div>
+
+      <div class="col-12 col-md-4 col-lg-3" *ngIf="periodPreset === 'CUSTOM'">
+        <label class="form-label">Data final</label>
+        <input class="form-control" type="date" [(ngModel)]="endDate" />
+      </div>
+
+      <div class="col-12 col-md-4 col-lg-3">
+        <label class="form-label">Tipo</label>
+        <select class="form-select" [(ngModel)]="type">
+          <option [ngValue]="''">Todos</option>
+          <option [ngValue]="'CLIENT_DEPOSIT'">Depósito</option>
+          <option [ngValue]="'DELIVERY_PAYMENT'">Pagamento de entrega</option>
+          <option [ngValue]="'CANCELLATION_PENALTY'">Multa de cancelamento</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-8 col-lg-6">
+        <label class="form-label">Usuário (nome/email)</label>
+        <input class="form-control" type="text" [(ngModel)]="userQuery" placeholder="Buscar por nome ou email" />
+      </div>
+
+      <div class="col-12 col-md-4 col-lg-6 d-flex gap-2 justify-content-md-end">
+        <button type="button" class="btn btn-primary" (click)="applyFilters()">Aplicar</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="clearFilters()">Limpar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-container *ngIf="summary$ | async as summary">
+  <div class="row g-3 mb-3">
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card border-0 shadow-sm financial-card financial-card--deposit">
+        <div class="card-body">
+          <div class="text-muted small">Total depositado</div>
+          <div class="h5 mb-0">{{ summary.totalClientDeposits | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card border-0 shadow-sm financial-card financial-card--payment">
+        <div class="card-body">
+          <div class="text-muted small">Total pago a entregadores</div>
+          <div class="h5 mb-0">{{ summary.totalDriverPayments | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card border-0 shadow-sm financial-card financial-card--penalty">
+        <div class="card-body">
+          <div class="text-muted small">Total em multas</div>
+          <div class="h5 mb-0">{{ summary.totalCancellationPenalties | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card border-0 shadow-sm financial-card financial-card--wallet">
+        <div class="card-body">
+          <div class="text-muted small">Saldo total em carteiras</div>
+          <div class="h5 mb-0" *ngIf="summary.totalWalletBalance !== null; else walletUnknown">
+            {{ summary.totalWalletBalance | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+          </div>
+          <ng-template #walletUnknown>
+            <div class="h5 mb-0 text-muted">—</div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body p-0">
+    <ng-container *ngIf="(pagedTransactions$ | async) as items">
+      <div *ngIf="items.length === 0" class="p-3 text-muted">
+        Nenhuma transação encontrada.
+      </div>
+
+      <div *ngIf="items.length > 0" class="table-responsive">
+        <table class="table mb-0 table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Data/hora</th>
+              <th>Tipo</th>
+              <th>Origem</th>
+              <th>Destino</th>
+              <th>Entrega</th>
+              <th class="text-end">Valor</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let t of items">
+              <td class="text-muted">{{ t.occurredAt | date:'short':'':'pt-BR' }}</td>
+              <td>
+                <span class="badge rounded-pill" [ngClass]="{
+                  'tx-badge tx-badge--deposit': t.type === 'CLIENT_DEPOSIT',
+                  'tx-badge tx-badge--payment': t.type === 'DELIVERY_PAYMENT',
+                  'tx-badge tx-badge--penalty': t.type === 'CANCELLATION_PENALTY'
+                }">
+                  {{ transactionTypeLabel(t.type) }}
+                </span>
+              </td>
+              <td>{{ t.originUserName ?? '—' }}</td>
+              <td>{{ t.destinationUserName ?? '—' }}</td>
+              <td class="text-muted">{{ t.deliveryId ?? '—' }}</td>
+              <td class="text-end">{{ t.amount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+              <td>{{ t.description }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<ng-container *ngIf="totalPages$ | async as totalPages">
+  <nav class="d-flex justify-content-end mt-3" aria-label="Paginação de transações">
+    <ul class="pagination pagination-sm mb-0">
+      <li class="page-item" [class.disabled]="page <= 1">
+        <button type="button" class="page-link" (click)="goToPage(page - 1, totalPages)">Anterior</button>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link">Página {{ page }} de {{ totalPages }}</span>
+      </li>
+      <li class="page-item" [class.disabled]="page >= totalPages">
+        <button type="button" class="page-link" (click)="goToPage(page + 1, totalPages)">Próxima</button>
+      </li>
+    </ul>
+  </nav>
+</ng-container>
+
+<div class="card border-0 shadow-sm mt-3">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h3 class="h6 mb-0">Insights</h3>
+      <span class="text-muted small">Top 5 multas por cliente</span>
+    </div>
+
+    <ng-container *ngIf="topCancellationPenalties$ | async as top">
+      <div *ngIf="top.length === 0" class="text-muted">
+        Sem dados no período.
+      </div>
+
+      <div *ngIf="top.length > 0" class="table-responsive">
+        <table class="table table-sm mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Cliente</th>
+              <th class="text-end">Qtd</th>
+              <th class="text-end">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of top">
+              <td>{{ item.userName }}</td>
+              <td class="text-end">{{ item.count }}</td>
+              <td class="text-end">{{ item.totalAmount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
   </div>
 </div>

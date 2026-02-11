@@ -9,9 +9,9 @@ import { AdminPendingUsersComponent } from './pages/admin-pending-users/admin-pe
 
 const routes: Routes = [
   { path: '', component: AdminHomeComponent },
-  { path: 'pending-users', component: AdminPendingUsersComponent },
-  { path: 'clients', component: AdminClientsComponent },
-  { path: 'drivers', component: AdminDriversComponent },
+  { path: 'users/pending', component: AdminPendingUsersComponent },
+  { path: 'users/clients', component: AdminClientsComponent },
+  { path: 'users/drivers', component: AdminDriversComponent },
   { path: 'deliveries', component: AdminDeliveriesComponent },
   { path: 'financial', component: AdminFinancialComponent },
 ];

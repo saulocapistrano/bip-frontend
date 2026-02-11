@@ -1,6 +1,151 @@
+<h2 class="h5 mb-3">Entregas</h2>
+
+<div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+  <span class="text-muted small">Legenda:</span>
+  <span class="badge rounded-pill bg-primary">Disponível</span>
+  <span class="badge rounded-pill bg-warning text-dark">Em rota</span>
+  <span class="badge rounded-pill bg-danger">Cancelada</span>
+  <span class="badge rounded-pill bg-returned-pool">Devolvida ao pool</span>
+  <span class="badge rounded-pill bg-success">Concluída</span>
+</div>
+
 <div class="card border-0 shadow-sm">
-  <div class="card-body">
-    <h2 class="h5 mb-1">Entregas</h2>
-    <p class="text-muted mb-0">Página em construção.</p>
+  <div class="card-body p-0">
+    <ng-container *ngIf="(deliveries$ | async) as deliveries">
+      <div *ngIf="deliveries.length === 0" class="p-3 text-muted">
+        Nenhuma entrega encontrada.
+      </div>
+
+      <div *ngIf="deliveries.length > 0" class="table-responsive">
+        <table class="table mb-0 table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Cliente</th>
+              <th>Entregador</th>
+              <th>Status</th>
+              <th class="text-end">Preço</th>
+              <th class="text-end">Peso (kg)</th>
+              <th>Criada em</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let d of (pagedDeliveries$ | async) ?? []"
+              class="clickable-row"
+              (click)="openDetails(d)"
+            >
+              <td class="text-muted">{{ d.id }}</td>
+              <td>{{ d.clientName }}</td>
+              <td>{{ d.driverName ?? '—' }}</td>
+              <td>
+                <span class="badge" [ngClass]="statusBadgeClass(d.status)">
+                  {{ statusLabel(d.status) }}
+                </span>
+              </td>
+              <td class="text-end">{{ d.offeredPrice | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+              <td class="text-end">{{ d.weightKg | number:'1.2-2':'pt-BR' }}</td>
+              <td class="text-muted">{{ d.createdAt }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
   </div>
 </div>
+
+<ng-container *ngIf="selectedDelivery as d">
+  <div class="modal-backdrop fade show"></div>
+  <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="d-flex flex-column">
+            <h5 class="modal-title mb-1">Detalhes da entrega</h5>
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge" [ngClass]="statusBadgeClass(d.status)">
+                {{ statusLabel(d.status) }}
+              </span>
+              <span class="text-muted small">{{ d.id }}</span>
+            </div>
+          </div>
+          <button type="button" class="btn-close" aria-label="Close" (click)="closeDetails()"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <div class="fw-semibold">Cliente</div>
+              <div>{{ d.clientName }}</div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <div class="fw-semibold">Entregador</div>
+              <div>{{ d.driverName ?? '—' }}</div>
+            </div>
+
+            <div class="col-12">
+              <div class="fw-semibold">Coleta</div>
+              <div>{{ d.pickupAddress }}</div>
+            </div>
+
+            <div class="col-12">
+              <div class="fw-semibold">Entrega</div>
+              <div>{{ d.deliveryAddress }}</div>
+            </div>
+
+            <div class="col-12">
+              <div class="fw-semibold">Descrição</div>
+              <div>{{ d.description }}</div>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <div class="fw-semibold">Preço ofertado</div>
+              <div>{{ d.offeredPrice | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</div>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <div class="fw-semibold">Peso</div>
+              <div>{{ d.weightKg | number:'1.2-2':'pt-BR' }} kg</div>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <div class="fw-semibold">Criada em</div>
+              <div class="text-muted">{{ d.createdAt }}</div>
+            </div>
+
+            <div class="col-12" *ngIf="d.cancellationReason">
+              <div class="fw-semibold">Motivo do cancelamento</div>
+              <div>{{ d.cancellationReason }}</div>
+            </div>
+
+            <div class="col-12" *ngIf="d.returnReason">
+              <div class="fw-semibold">Motivo da devolução</div>
+              <div>{{ d.returnReason }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeDetails()">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="totalPages$ | async as totalPages">
+  <nav class="d-flex justify-content-end mt-3" aria-label="Paginação de entregas">
+    <ul class="pagination pagination-sm mb-0">
+      <li class="page-item" [class.disabled]="page <= 1">
+        <button type="button" class="page-link" (click)="goToPage(page - 1, totalPages)">Anterior</button>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link">Página {{ page }} de {{ totalPages }}</span>
+      </li>
+      <li class="page-item" [class.disabled]="page >= totalPages">
+        <button type="button" class="page-link" (click)="goToPage(page + 1, totalPages)">Próxima</button>
+      </li>
+    </ul>
+  </nav>
+</ng-container>

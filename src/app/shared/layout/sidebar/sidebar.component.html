@@ -97,7 +97,7 @@
         <span class="app-sidebar__label" *ngIf="!collapsed">Dashboard</span>
       </a>
       <a
-        routerLink="/admin/pending-users"
+        routerLink="/admin/users/pending"
         routerLinkActive="active"
         (click)="onNavigate()"
         [attr.title]="collapsed ? 'Usuários pendentes' : null"
@@ -111,7 +111,7 @@
         <span class="app-sidebar__label" *ngIf="!collapsed">Usuários pendentes</span>
       </a>
       <a
-        routerLink="/admin/clients"
+        routerLink="/admin/users/clients"
         routerLinkActive="active"
         (click)="onNavigate()"
         [attr.title]="collapsed ? 'Clientes' : null"
@@ -125,7 +125,7 @@
         <span class="app-sidebar__label" *ngIf="!collapsed">Clientes</span>
       </a>
       <a
-        routerLink="/admin/drivers"
+        routerLink="/admin/users/drivers"
         routerLinkActive="active"
         (click)="onNavigate()"
         [attr.title]="collapsed ? 'Entregadores' : null"
