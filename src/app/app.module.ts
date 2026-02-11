@@ -4,6 +4,8 @@ import { RouterModule } from '@angular/router';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { CoreModule } from './core/core.module';
+import { SharedModule } from './shared/shared.module';
 
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { keycloakConfig } from './features/keycloak.config';
@@ -27,6 +29,8 @@ export function initializeKeycloak(keycloak: KeycloakService) {
   declarations: [AppComponent],
   imports: [
     BrowserModule,
+    CoreModule,
+    SharedModule,
     AppRoutingModule,
     RouterModule,
     KeycloakAngularModule,
