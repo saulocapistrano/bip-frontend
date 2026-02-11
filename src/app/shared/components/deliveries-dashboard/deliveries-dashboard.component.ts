@@ -30,6 +30,7 @@ export class DeliveriesDashboardComponent {
     IN_ROUTE: 'bg-warning text-dark',
     COMPLETED: 'bg-success',
     CANCELED: 'bg-danger',
+    RETURNED_TO_POOL: 'bg-secondary',
   };
 
   @Input() onPageChange: (page: number) => void = () => {};
