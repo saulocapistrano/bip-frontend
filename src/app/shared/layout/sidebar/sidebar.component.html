@@ -1,0 +1,170 @@
+<aside
+  class="app-sidebar"
+  [class.app-sidebar--open]="open"
+  [class.app-sidebar--collapsed]="collapsed"
+>
+  <div class="app-sidebar__inner">
+    <div class="app-sidebar__section" *ngIf="isClient">
+      <p class="app-sidebar__section-title" *ngIf="!collapsed">Cliente</p>
+      <a
+        routerLink="/client"
+        routerLinkActive="active"
+        (click)="onNavigate()"
+        [attr.title]="collapsed ? 'Minhas entregas' : null"
+      >
+        <span class="app-sidebar__icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+            <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5z" />
+            <path d="M9.5 0v4a1 1 0 0 0 1 1h4" />
+          </svg>
+        </span>
+        <span class="app-sidebar__label" *ngIf="!collapsed">Minhas entregas</span>
+      </a>
+      <a
+        routerLink="/client/new-delivery"
+        (click)="onNavigate()"
+        [attr.title]="collapsed ? 'Nova entrega' : null"
+      >
+        <span class="app-sidebar__icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+            <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm3 7.5H8.5V11h-1V8.5H5v-1h2.5V5h1v2.5H11v1z" />
+          </svg>
+        </span>
+        <span class="app-sidebar__label" *ngIf="!collapsed">Nova entrega</span>
+      </a>
+    </div>
+
+    <div class="app-sidebar__section" *ngIf="isDriver">
+      <p class="app-sidebar__section-title" *ngIf="!collapsed">Entregador</p>
+      <a
+        routerLink="/driver"
+        routerLinkActive="active"
+        (click)="onNavigate()"
+        [attr.title]="collapsed ? 'Entregas disponíveis' : null"
+      >
+        <span class="app-sidebar__icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+            <path d="M2 2.5A1.5 1.5 0 0 1 3.5 1h7A1.5 1.5 0 0 1 12 2.5V4h-1V2.5a.5.5 0 0 0-.5-.5h-7a.5.5 0 0 0-.5.5V4H2V2.5z" />
+            <path d="M1 5a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V5zm2 4h10v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z" />
+          </svg>
+        </span>
+        <span class="app-sidebar__label" *ngIf="!collapsed">Entregas disponíveis</span>
+      </a>
+      <a
+        routerLink="/driver/in-route"
+        routerLinkActive="active"
+        (click)="onNavigate()"
+        [attr.title]="collapsed ? 'Em rota' : null"
+      >
+        <span class="app-sidebar__icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+            <path d="M8 3.5a.5.5 0 0 1 .5.5v4.268l2.096 1.21a.5.5 0 0 1-.5.866l-2.346-1.354A.5.5 0 0 1 7.5 8.5V4a.5.5 0 0 1 .5-.5z" />
+            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm0-1A7 7 0 1 1 8 1a7 7 0 0 1 0 14z" />
+          </svg>
+        </span>
+        <span class="app-sidebar__label" *ngIf="!collapsed">Em rota</span>
+      </a>
+      <a
+        routerLink="/driver/history"
+        routerLinkActive="active"
+        (click)="onNavigate()"
+        [attr.title]="collapsed ? 'Histórico' : null"
+      >
+        <span class="app-sidebar__icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+            <path d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 1 1 .908-.418A4 4 0 1 0 8 4a.5.5 0 0 1 0-1z" />
+            <path d="M8 1a.5.5 0 0 1 .5.5V7h3a.5.5 0 0 1 0 1H8a.5.5 0 0 1-.5-.5V1.5A.5.5 0 0 1 8 1z" />
+            <path d="M2.5 5.5a.5.5 0 0 1-.5-.5V2.707L.854 3.854a.5.5 0 1 1-.708-.708l2-2A.5.5 0 0 1 3 1.5v3.5a.5.5 0 0 1-.5.5z" />
+          </svg>
+        </span>
+        <span class="app-sidebar__label" *ngIf="!collapsed">Histórico</span>
+      </a>
+    </div>
+
+    <div class="app-sidebar__section" *ngIf="isAdmin">
+      <p class="app-sidebar__section-title" *ngIf="!collapsed">Admin</p>
+      <a
+        routerLink="/admin"
+        routerLinkActive="active"
+        (click)="onNavigate()"
+        [attr.title]="collapsed ? 'Dashboard' : null"
+      >
+        <span class="app-sidebar__icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+            <path d="M0 0h7v7H0V0zm9 0h7v4H9V0zM9 6h7v10H9V6zM0 9h7v7H0V9z" />
+          </svg>
+        </span>
+        <span class="app-sidebar__label" *ngIf="!collapsed">Dashboard</span>
+      </a>
+      <a
+        routerLink="/admin/pending-users"
+        routerLinkActive="active"
+        (click)="onNavigate()"
+        [attr.title]="collapsed ? 'Usuários pendentes' : null"
+      >
+        <span class="app-sidebar__icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+            <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm5.5 3a2.5 2.5 0 1 0-2.45-2h-1.1a3.5 3.5 0 0 1 1.5 2.9V14H0v-1c0-2.761 2.686-5 6-5 1.127 0 2.182.258 3.06.706a2.5 2.5 0 0 0 2.44 2.294z" />
+            <path d="M12.5 10.5a.5.5 0 0 1-.5-.5V9h-1a.5.5 0 0 1 0-1h1V7a.5.5 0 0 1 1 0v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-.5.5z" />
+          </svg>
+        </span>
+        <span class="app-sidebar__label" *ngIf="!collapsed">Usuários pendentes</span>
+      </a>
+      <a
+        routerLink="/admin/clients"
+        routerLinkActive="active"
+        (click)="onNavigate()"
+        [attr.title]="collapsed ? 'Clientes' : null"
+      >
+        <span class="app-sidebar__icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+            <path d="M13 14s1 0 1-1-1-4-6-4-6 3-6 4 1 1 1 1h10z" />
+            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+          </svg>
+        </span>
+        <span class="app-sidebar__label" *ngIf="!collapsed">Clientes</span>
+      </a>
+      <a
+        routerLink="/admin/drivers"
+        routerLinkActive="active"
+        (click)="onNavigate()"
+        [attr.title]="collapsed ? 'Entregadores' : null"
+      >
+        <span class="app-sidebar__icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+            <path d="M4.5 2A2.5 2.5 0 0 1 7 4.5V6h2V4.5a2.5 2.5 0 0 1 5 0V6h.5A1.5 1.5 0 0 1 16 7.5v6A2.5 2.5 0 0 1 13.5 16h-11A2.5 2.5 0 0 1 0 13.5v-6A1.5 1.5 0 0 1 1.5 6H2V4.5A2.5 2.5 0 0 1 4.5 2z" />
+          </svg>
+        </span>
+        <span class="app-sidebar__label" *ngIf="!collapsed">Entregadores</span>
+      </a>
+      <a
+        routerLink="/admin/deliveries"
+        routerLinkActive="active"
+        (click)="onNavigate()"
+        [attr.title]="collapsed ? 'Entregas' : null"
+      >
+        <span class="app-sidebar__icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+            <path d="M0 1.5A.5.5 0 0 1 .5 1h12a.5.5 0 0 1 .5.5V5h-1V2H1v11h11v-3h1v3.5a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5v-12z" />
+            <path d="M13.854 7.146a.5.5 0 0 1 0 .708l-3.5 3.5a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708l1.146 1.146 3.146-3.146a.5.5 0 0 1 .708 0z" />
+          </svg>
+        </span>
+        <span class="app-sidebar__label" *ngIf="!collapsed">Entregas</span>
+      </a>
+      <a
+        routerLink="/admin/financial"
+        routerLinkActive="active"
+        (click)="onNavigate()"
+        [attr.title]="collapsed ? 'Relatório financeiro' : null"
+      >
+        <span class="app-sidebar__icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+            <path d="M0 0h1v15h15v1H0V0z" />
+            <path d="M14 10V5h1v5h-1zM11 10V3h1v7h-1zM8 10V7h1v3H8zM5 10V4h1v6H5zM2 10V6h1v4H2z" />
+          </svg>
+        </span>
+        <span class="app-sidebar__label" *ngIf="!collapsed">Relatório financeiro</span>
+      </a>
+    </div>
+  </div>
+</aside>

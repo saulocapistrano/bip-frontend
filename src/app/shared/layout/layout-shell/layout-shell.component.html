@@ -1,0 +1,28 @@
+<div
+  class="app-shell"
+  [class.app-shell--sidebar-collapsed]="sidebarCollapsed"
+>
+  <app-topbar
+    (menuToggle)="toggleSidebar()"
+    (collapseToggle)="toggleSidebarCollapsed()"
+    [userName]="userName"
+    (logout)="logout()"
+  ></app-topbar>
+
+  <div class="app-shell__body">
+    <app-sidebar
+      [open]="sidebarOpen"
+      [collapsed]="sidebarCollapsed"
+      [isAdmin]="isAdmin"
+      [isClient]="isClient"
+      [isDriver]="isDriver"
+      (navigate)="sidebarOpen = false"
+    ></app-sidebar>
+
+    <main class="app-shell__content">
+      <div class="app-shell__content-inner">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+</div>
