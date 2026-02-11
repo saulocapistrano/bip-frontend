@@ -1,0 +1,17 @@
+
+.admin-home-card {
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.admin-home-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0.75rem 1.25rem rgba(0, 0, 0, 0.08) !important;
+}
+
+.admin-home-card:focus-visible {
+  outline: 3px solid rgba(13, 110, 253, 0.35);
+  outline-offset: 2px;
+}

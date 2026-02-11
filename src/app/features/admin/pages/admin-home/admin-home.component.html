@@ -1,1 +1,78 @@
-<p>admin-home works!</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="h4 mb-1">Admin</h1>
+    <p class="text-muted mb-0">Gestão e monitoramento do BIP.</p>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-md-6 col-lg-4">
+    <a
+      routerLink="/admin/users/pending"
+      class="card h-100 shadow-sm text-decoration-none admin-home-card"
+    >
+      <div class="card-body">
+        <h5 class="card-title mb-1">Usuários pendentes</h5>
+        <p class="card-text text-muted mb-0">
+          Aprovar novos clientes e entregadores.
+        </p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-12 col-md-6 col-lg-4">
+    <a
+      routerLink="/admin/users/drivers"
+      class="card h-100 shadow-sm text-decoration-none admin-home-card"
+    >
+      <div class="card-body">
+        <h5 class="card-title mb-1">Entregadores</h5>
+        <p class="card-text text-muted mb-0">
+          Consultar lista de entregadores e status.
+        </p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-12 col-md-6 col-lg-4">
+    <a
+      routerLink="/admin/users/clients"
+      class="card h-100 shadow-sm text-decoration-none admin-home-card"
+    >
+      <div class="card-body">
+        <h5 class="card-title mb-1">Clientes</h5>
+        <p class="card-text text-muted mb-0">
+          Consultar lista de clientes e status.
+        </p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-12 col-md-6 col-lg-4">
+    <a
+      routerLink="/admin/deliveries"
+      class="card h-100 shadow-sm text-decoration-none admin-home-card"
+    >
+      <div class="card-body">
+        <h5 class="card-title mb-1">Entregas</h5>
+        <p class="card-text text-muted mb-0">
+          Visualizar entregas e acompanhar status.
+        </p>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-12 col-md-6 col-lg-4">
+    <a
+      routerLink="/admin/financial"
+      class="card h-100 shadow-sm text-decoration-none admin-home-card"
+    >
+      <div class="card-body">
+        <h5 class="card-title mb-1">Relatório financeiro</h5>
+        <p class="card-text text-muted mb-0">
+          Receita, custos e repasses (em construção).
+        </p>
+      </div>
+    </a>
+  </div>
+</div>
