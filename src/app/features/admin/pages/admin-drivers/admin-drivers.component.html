@@ -13,14 +13,89 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let user of (users$ | async) ?? []">
+        <tr
+          *ngFor="let user of (pagedUsers$ | async) ?? []"
+          class="clickable-row"
+          (click)="openDetails(user)"
+        >
           <td>{{ user.name }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.status }}</td>
-          <td class="text-end">{{ user.driverBalance ?? 0 | currency : 'BRL' }}</td>
-          <td class="text-end">{{ user.driverScore ?? '—' }}</td>
+          <td class="text-end">{{ user.driverBalance ?? 0 | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+          <td class="text-end">{{ user.driverScore ?? 0 | number:'1.2-2':'pt-BR' }}</td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
+
+<ng-container *ngIf="selectedUser as u">
+  <div class="modal-backdrop fade show"></div>
+  <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="d-flex flex-column">
+            <h5 class="modal-title mb-1">Detalhes do entregador</h5>
+            <div class="text-muted small">{{ u.name }}</div>
+          </div>
+          <button type="button" class="btn-close" aria-label="Close" (click)="closeDetails()"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <div class="fw-semibold">Email</div>
+              <div>{{ u.email }}</div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <div class="fw-semibold">Telefone</div>
+              <div>{{ u.phone }}</div>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <div class="fw-semibold">Status</div>
+              <div>{{ u.status }}</div>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <div class="fw-semibold">Saldo</div>
+              <div>{{ u.driverBalance ?? 0 | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</div>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <div class="fw-semibold">Score</div>
+              <div>{{ u.driverScore ?? 0 | number:'1.2-2':'pt-BR' }}</div>
+            </div>
+
+            <div class="col-12">
+              <div class="fw-semibold">Criado em</div>
+              <div class="text-muted">{{ u.createdAt }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeDetails()">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="totalPages$ | async as totalPages">
+  <nav class="d-flex justify-content-end mt-3" aria-label="Paginação de entregadores">
+    <ul class="pagination pagination-sm mb-0">
+      <li class="page-item" [class.disabled]="page <= 1">
+        <button type="button" class="page-link" (click)="goToPage(page - 1, totalPages)">Anterior</button>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link">Página {{ page }} de {{ totalPages }}</span>
+      </li>
+      <li class="page-item" [class.disabled]="page >= totalPages">
+        <button type="button" class="page-link" (click)="goToPage(page + 1, totalPages)">Próxima</button>
+      </li>
+    </ul>
+  </nav>
+</ng-container>
