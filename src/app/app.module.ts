@@ -1,4 +1,6 @@
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { NgModule, APP_INITIALIZER, LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localePt from '@angular/common/locales/pt';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
@@ -9,6 +11,8 @@ import { SharedModule } from './shared/shared.module';
 
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { keycloakConfig } from './features/keycloak.config';
+
+registerLocaleData(localePt, 'pt-BR');
 
 export function initializeKeycloak(keycloak: KeycloakService) {
   return () =>
@@ -41,6 +45,10 @@ export function initializeKeycloak(keycloak: KeycloakService) {
       useFactory: initializeKeycloak,
       multi: true,
       deps: [KeycloakService],
+    },
+    {
+      provide: LOCALE_ID,
+      useValue: 'pt-BR',
     },
   ],
   bootstrap: [AppComponent],
