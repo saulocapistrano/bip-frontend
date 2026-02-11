@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_CONFIG } from '../../core/config/api-config';
-import { DeliveryResponse } from '../models/delivery-list-item.model';
+import { DeliveryResponse, DeliveryStatus } from '../models/delivery-list-item.model';
 
 @Injectable({ providedIn: 'root' })
 export class DeliveriesApiService {
@@ -37,6 +37,18 @@ export class DeliveriesApiService {
     return this.http.get<DeliveryResponse[]>(
       `${this.baseUrl}driver/deliveries/available`,
     );
+  }
+
+  listAdminDeliveries(status?: DeliveryStatus): Observable<DeliveryResponse[]> {
+    let params = new HttpParams();
+
+    if (status) {
+      params = params.set('status', status);
+    }
+
+    return this.http.get<DeliveryResponse[]>(`${this.baseUrl}admin/deliveries`, {
+      params,
+    });
   }
 
   createClientDelivery(payload: {
