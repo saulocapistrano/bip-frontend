@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-admin-home',
   standalone: false,
   templateUrl: './admin-home.component.html',
-  styleUrl: './admin-home.component.scss'
+  styleUrls: ['./admin-home.component.scss']
 })
 export class AdminHomeComponent {
 
