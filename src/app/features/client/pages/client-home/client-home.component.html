@@ -1,9 +1,9 @@
 <app-deliveries-dashboard
   [title]="'Minhas entregas'"
   [summaryCards]="summaryCards"
-  [deliveries]="deliveries"
+  [deliveries]="(deliveries$ | async) ?? []"
   [currentPage]="currentPage"
   [totalPages]="totalPages"
-  [loading]="loading"
+  [loading]="(loading$ | async) ?? false"
   [onPageChange]="onPageChange.bind(this)"
 ></app-deliveries-dashboard>

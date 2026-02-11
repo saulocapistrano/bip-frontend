@@ -10,6 +10,16 @@ export class UserContextService {
     return token?.sub ?? null;
   }
 
+  get currentUserId(): string {
+    const userId = this.userId;
+
+    if (!userId) {
+      throw new Error('Usuário não autenticado.');
+    }
+
+    return userId;
+  }
+
   get roles(): string[] {
     return this.keycloak.getUserRoles() ?? [];
   }
