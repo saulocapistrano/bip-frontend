@@ -28,6 +28,8 @@ export class DeliveryMapper {
         return 'Concluída';
       case 'CANCELED':
         return 'Cancelada';
+      case 'RETURNED_TO_POOL':
+        return 'Retornada ao pool';
       default:
         return status;
     }

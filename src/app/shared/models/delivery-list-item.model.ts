@@ -1,4 +1,9 @@
-export type DeliveryStatus = 'AVAILABLE' | 'IN_ROUTE' | 'COMPLETED' | 'CANCELED';
+export type DeliveryStatus =
+  | 'AVAILABLE'
+  | 'IN_ROUTE'
+  | 'COMPLETED'
+  | 'CANCELED'
+  | 'RETURNED_TO_POOL';
 
 export interface DeliveryResponse {
   id: string;
@@ -10,6 +15,8 @@ export interface DeliveryResponse {
   weightKg: number;
   offeredPrice: number;
   status: DeliveryStatus;
+  cancellationReason?: string | null;
+  returnReason?: string | null;
   createdAt: string;
 }
 
