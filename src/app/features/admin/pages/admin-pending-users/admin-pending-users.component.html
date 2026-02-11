@@ -1,6 +1,41 @@
+<h2 class="h5 mb-3">Usuários pendentes de aprovação</h2>
+
 <div class="card border-0 shadow-sm">
-  <div class="card-body">
-    <h2 class="h5 mb-1">Usuários pendentes</h2>
-    <p class="text-muted mb-0">Página em construção.</p>
+  <div class="card-body p-0">
+    <table class="table mb-0 table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Perfil</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of (users$ | async) ?? []">
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role }}</td>
+          <td>{{ user.status }}</td>
+          <td class="text-nowrap">
+            <button
+              type="button"
+              class="btn btn-sm btn-success me-2"
+              (click)="approve(user)"
+            >
+              Aprovar
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger"
+              (click)="reject(user)"
+            >
+              Rejeitar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>

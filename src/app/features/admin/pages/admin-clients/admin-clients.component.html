@@ -1,6 +1,24 @@
+<h2 class="h5 mb-3">Clientes</h2>
+
 <div class="card border-0 shadow-sm">
-  <div class="card-body">
-    <h2 class="h5 mb-1">Clientes</h2>
-    <p class="text-muted mb-0">Página em construção.</p>
+  <div class="card-body p-0">
+    <table class="table mb-0 table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th class="text-end">Saldo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of (users$ | async) ?? []">
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.status }}</td>
+          <td class="text-end">{{ user.clientBalance ?? 0 | currency : 'BRL' }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
