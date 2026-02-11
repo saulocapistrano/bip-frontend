@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-driver-home',
   standalone: false,
   templateUrl: './driver-home.component.html',
-  styleUrl: './driver-home.component.scss'
+  styleUrls: ['./driver-home.component.scss']
 })
 export class DriverHomeComponent {
 
