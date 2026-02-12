@@ -17,6 +17,10 @@ export class DeliveriesApiService {
     });
   }
 
+  listClientDeliveriesMine(): Observable<DeliveryResponse[]> {
+    return this.http.get<DeliveryResponse[]>(`${this.baseUrl}client/deliveries/mine`);
+  }
+
   listDriverDeliveries(driverId: string): Observable<DeliveryResponse[]> {
     const params = new HttpParams().set('driverId', driverId);
     return this.http.get<DeliveryResponse[]>(
@@ -25,11 +29,23 @@ export class DeliveriesApiService {
     );
   }
 
+  listDriverDeliveriesMine(): Observable<DeliveryResponse[]> {
+    return this.http.get<DeliveryResponse[]>(
+      `${this.baseUrl}driver/deliveries/mine/auth`,
+    );
+  }
+
   listDriverInRoute(driverId: string): Observable<DeliveryResponse[]> {
     const params = new HttpParams().set('driverId', driverId);
     return this.http.get<DeliveryResponse[]>(
       `${this.baseUrl}driver/deliveries/in-route`,
       { params },
+    );
+  }
+
+  listDriverInRouteMine(): Observable<DeliveryResponse[]> {
+    return this.http.get<DeliveryResponse[]>(
+      `${this.baseUrl}driver/deliveries/in-route/mine`,
     );
   }
 
@@ -62,12 +78,29 @@ export class DeliveriesApiService {
     return this.http.post<DeliveryResponse>(`${this.baseUrl}client/deliveries`, payload);
   }
 
+  createClientDeliveryMine(payload: {
+    pickupAddress: string;
+    deliveryAddress: string;
+    description: string;
+    weightKg: number;
+    offeredPrice: number;
+  }): Observable<DeliveryResponse> {
+    return this.http.post<DeliveryResponse>(`${this.baseUrl}client/deliveries/mine`, payload);
+  }
+
   acceptDelivery(deliveryId: string, driverId: string): Observable<DeliveryResponse> {
     const params = new HttpParams().set('driverId', driverId);
     return this.http.post<DeliveryResponse>(
       `${this.baseUrl}driver/deliveries/${deliveryId}/accept`,
       {},
       { params },
+    );
+  }
+
+  acceptDeliveryMine(deliveryId: string): Observable<DeliveryResponse> {
+    return this.http.post<DeliveryResponse>(
+      `${this.baseUrl}driver/deliveries/${deliveryId}/accept/mine`,
+      {},
     );
   }
 
@@ -80,6 +113,13 @@ export class DeliveriesApiService {
     );
   }
 
+  completeDeliveryMine(deliveryId: string): Observable<DeliveryResponse> {
+    return this.http.post<DeliveryResponse>(
+      `${this.baseUrl}driver/deliveries/${deliveryId}/complete/mine`,
+      {},
+    );
+  }
+
   cancelDelivery(
     deliveryId: string,
     clientId: string,
@@ -88,6 +128,15 @@ export class DeliveriesApiService {
     const params = new HttpParams().set('clientId', clientId).set('reason', reason);
     return this.http.post<DeliveryResponse>(
       `${this.baseUrl}client/deliveries/${deliveryId}/cancel`,
+      {},
+      { params },
+    );
+  }
+
+  cancelDeliveryMine(deliveryId: string, reason: string): Observable<DeliveryResponse> {
+    const params = new HttpParams().set('reason', reason);
+    return this.http.post<DeliveryResponse>(
+      `${this.baseUrl}client/deliveries/${deliveryId}/cancel/mine`,
       {},
       { params },
     );

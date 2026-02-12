@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { UserContextService } from '../../../core/auth/user-context.service';
 import { DeliveriesApiService } from '../../../shared/api/deliveries-api.service';
 import {
   DeliveryListItem,
@@ -13,12 +12,10 @@ import { DeliveryMapper } from '../../../shared/mappers/delivery.mapper';
 export class ClientDeliveriesService {
   constructor(
     private readonly deliveriesApi: DeliveriesApiService,
-    private readonly userContext: UserContextService,
   ) {}
 
   listMyDeliveries(): Observable<DeliveryResponse[]> {
-    const clientId = this.userContext.currentUserId;
-    return this.deliveriesApi.listClientDeliveries(clientId);
+    return this.deliveriesApi.listClientDeliveriesMine();
   }
 
   listMyDeliveriesAsListItems(): Observable<DeliveryListItem[]> {
@@ -34,7 +31,10 @@ export class ClientDeliveriesService {
     weightKg: number;
     offeredPrice: number;
   }): Observable<DeliveryResponse> {
-    const clientId = this.userContext.currentUserId;
-    return this.deliveriesApi.createClientDelivery({ clientId, ...input });
+    return this.deliveriesApi.createClientDeliveryMine(input);
+  }
+
+  cancelDelivery(deliveryId: string, reason: string): Observable<DeliveryResponse> {
+    return this.deliveriesApi.cancelDeliveryMine(deliveryId, reason);
   }
 }

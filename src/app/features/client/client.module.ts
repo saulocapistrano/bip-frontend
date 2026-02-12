@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../../shared/shared.module';
 
 import { ClientRoutingModule } from './client-routing.module';
@@ -13,6 +14,7 @@ import { ClientNewDeliveryComponent } from './pages/client-new-delivery/client-n
   ],
   imports: [
     SharedModule,
+    FormsModule,
     ClientRoutingModule
   ]
 })
