@@ -5,7 +5,8 @@ import {
   HttpInterceptor,
   HttpRequest,
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { KeycloakService } from 'keycloak-angular';
 import { API_CONFIG } from '../config/api-config';
 
@@ -17,22 +18,34 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     req: HttpRequest<unknown>,
     next: HttpHandler,
   ): Observable<HttpEvent<unknown>> {
-    if (!req.url.startsWith(API_CONFIG.baseUrl)) {
+    const baseUrl = API_CONFIG.baseUrl;
+    const isRelativeBaseUrl = baseUrl.startsWith('/');
+    const isApiRequest =
+      req.url.startsWith(baseUrl) ||
+      (isRelativeBaseUrl && req.url.startsWith(`${window.location.origin}${baseUrl}`));
+
+    if (!isApiRequest) {
       return next.handle(req);
     }
 
-    const token = this.keycloak.getKeycloakInstance().token;
+    return from(this.keycloak.updateToken(10)).pipe(
+      switchMap(() => {
+        return from(this.keycloak.getToken()).pipe(
+          switchMap((token) => {
+            if (!token) {
+              return next.handle(req);
+            }
 
-    if (!token) {
-      return next.handle(req);
-    }
+            const cloned = req.clone({
+              setHeaders: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
 
-    const cloned = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return next.handle(cloned);
+            return next.handle(cloned);
+          }),
+        );
+      }),
+    );
   }
 }

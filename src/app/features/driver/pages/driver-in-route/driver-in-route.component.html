@@ -1,6 +1,82 @@
-<div class="card border-0 shadow-sm">
-  <div class="card-body">
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <div>
     <h2 class="h5 mb-1">Entregas em rota</h2>
-    <p class="text-muted mb-0">Página em construção.</p>
+    <p class="text-muted mb-0">Conclua as entregas que você aceitou.</p>
+  </div>
+
+  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="refresh()">
+    Atualizar
+  </button>
+</div>
+
+<div class="alert alert-danger" *ngIf="completeError">{{ completeError }}</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body p-0">
+    <ng-container *ngIf="(loading$ | async) === false; else loadingTpl">
+      <ng-container *ngIf="(pagedDeliveries$ | async) as deliveries">
+        <div *ngIf="deliveries.length === 0" class="p-3 text-muted">
+          Nenhuma entrega em rota.
+        </div>
+
+        <div *ngIf="deliveries.length > 0" class="table-responsive">
+          <table class="table mb-0 table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Descrição</th>
+                <th>Status</th>
+                <th class="text-end">Preço</th>
+                <th>Criada em</th>
+                <th class="text-end">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let d of deliveries">
+                <td>
+                  <div class="fw-semibold">{{ d.description }}</div>
+                  <div class="text-muted small">De: {{ d.pickupAddress }}</div>
+                  <div class="text-muted small">Para: {{ d.deliveryAddress }}</div>
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="statusBadgeClass[d.status]">{{ d.statusLabel }}</span>
+                </td>
+                <td class="text-end">{{ d.offeredPrice | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+                <td class="text-muted">{{ d.createdAt }}</td>
+                <td class="text-end">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-success"
+                    (click)="complete(d)"
+                    [disabled]="!canComplete(d.status) || completingId === d.id"
+                  >
+                    Concluir
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #loadingTpl>
+      <div class="text-center text-muted py-4">Carregando entregas...</div>
+    </ng-template>
   </div>
 </div>
+
+<ng-container *ngIf="totalPages$ | async as totalPages">
+  <nav class="d-flex justify-content-end mt-3" aria-label="Paginação de entregas em rota">
+    <ul class="pagination pagination-sm mb-0">
+      <li class="page-item" [class.disabled]="page <= 1">
+        <button type="button" class="page-link" (click)="goToPage(page - 1, totalPages)">Anterior</button>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link">Página {{ page }} de {{ totalPages }}</span>
+      </li>
+      <li class="page-item" [class.disabled]="page >= totalPages">
+        <button type="button" class="page-link" (click)="goToPage(page + 1, totalPages)">Próxima</button>
+      </li>
+    </ul>
+  </nav>
+</ng-container>

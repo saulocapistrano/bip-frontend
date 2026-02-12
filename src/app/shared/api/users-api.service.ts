@@ -3,10 +3,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { API_CONFIG } from '../../core/config/api-config';
 import { UserResponse, UserRole, UserStatus } from '../models/user.model';
+import { UserMeResponse } from '../models/user-me.model';
 
 @Injectable({ providedIn: 'root' })
 export class UsersApiService {
   private readonly baseUrl = `${API_CONFIG.baseUrl}/admin/users`;
+  private readonly meUrl = `${API_CONFIG.baseUrl}/users/me`;
 
   constructor(private readonly http: HttpClient) {}
 
@@ -37,6 +39,10 @@ export class UsersApiService {
 
   rejectUser(userId: string): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/${userId}/reject`, {});
+  }
+
+  getMe(): Observable<UserMeResponse> {
+    return this.http.get<UserMeResponse>(this.meUrl);
   }
 
   private mapUser(input: unknown): UserResponse {

@@ -1,9 +1,153 @@
-<app-deliveries-dashboard
-  [title]="'Minhas entregas'"
-  [summaryCards]="summaryCards"
-  [deliveries]="(deliveries$ | async) ?? []"
-  [currentPage]="currentPage"
-  [totalPages]="totalPages"
-  [loading]="(loading$ | async) ?? false"
-  [onPageChange]="onPageChange.bind(this)"
-></app-deliveries-dashboard>
+<div class="card border-0 shadow-sm mb-3">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+      <div>
+        <h2 class="h6 mb-1">Saldo</h2>
+        <p class="text-muted mb-0">Adicione saldo para solicitar novas entregas.</p>
+      </div>
+
+      <div class="d-flex align-items-end gap-2">
+        <div>
+          <label class="form-label mb-1">Valor</label>
+          <input
+            class="form-control form-control-sm"
+            type="number"
+            min="0"
+            step="0.01"
+            [(ngModel)]="depositAmount"
+            [disabled]="depositSubmitting"
+          />
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-sm btn-primary"
+          (click)="deposit()"
+          [disabled]="depositSubmitting"
+        >
+          Adicionar saldo
+        </button>
+      </div>
+    </div>
+
+    <div class="mt-3" *ngIf="depositError">
+      <div class="alert alert-danger mb-0">{{ depositError }}</div>
+    </div>
+
+    <div class="mt-3" *ngIf="depositSuccess">
+      <div class="alert alert-success mb-0">{{ depositSuccess }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <div>
+    <h2 class="h5 mb-1">Minhas entregas</h2>
+    <p class="text-muted mb-0">Todas as solicitações (independente do status).</p>
+  </div>
+
+  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="refresh()">
+    Atualizar
+  </button>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body p-0">
+    <ng-container *ngIf="(loading$ | async) === false; else loadingTpl">
+      <ng-container *ngIf="(pagedDeliveries$ | async) as deliveries">
+        <div *ngIf="deliveries.length === 0" class="p-3 text-muted">
+          Nenhuma entrega encontrada.
+        </div>
+
+        <div *ngIf="deliveries.length > 0" class="table-responsive">
+          <table class="table mb-0 table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Descrição</th>
+                <th>Status</th>
+                <th class="text-end">Preço</th>
+                <th>Criada em</th>
+                <th class="text-end">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let d of deliveries">
+                <td>
+                  <div class="fw-semibold">{{ d.description }}</div>
+                  <div class="text-muted small">De: {{ d.pickupAddress }}</div>
+                  <div class="text-muted small">Para: {{ d.deliveryAddress }}</div>
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="statusBadgeClass[d.status]">{{ d.statusLabel }}</span>
+                </td>
+                <td class="text-end">{{ d.offeredPrice | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+                <td class="text-muted">{{ d.createdAt }}</td>
+                <td class="text-end">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="openCancel(d); $event.stopPropagation()"
+                    [disabled]="!canCancel(d.status)"
+                  >
+                    Cancelar
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #loadingTpl>
+      <div class="text-center text-muted py-4">Carregando entregas...</div>
+    </ng-template>
+  </div>
+</div>
+
+<ng-container *ngIf="totalPages$ | async as totalPages">
+  <nav class="d-flex justify-content-end mt-3" aria-label="Paginação de entregas">
+    <ul class="pagination pagination-sm mb-0">
+      <li class="page-item" [class.disabled]="page <= 1">
+        <button type="button" class="page-link" (click)="goToPage(page - 1, totalPages)">Anterior</button>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link">Página {{ page }} de {{ totalPages }}</span>
+      </li>
+      <li class="page-item" [class.disabled]="page >= totalPages">
+        <button type="button" class="page-link" (click)="goToPage(page + 1, totalPages)">Próxima</button>
+      </li>
+    </ul>
+  </nav>
+</ng-container>
+
+<ng-container *ngIf="selectedCancelDelivery as d">
+  <div class="modal-backdrop fade show"></div>
+  <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="d-flex flex-column">
+            <h5 class="modal-title mb-1">Cancelar entrega</h5>
+            <div class="text-muted small">{{ d.description }}</div>
+          </div>
+          <button type="button" class="btn-close" aria-label="Close" (click)="closeCancel()"></button>
+        </div>
+
+        <div class="modal-body">
+          <label class="form-label">Motivo do cancelamento</label>
+          <textarea class="form-control" rows="3" [(ngModel)]="cancelReason"></textarea>
+
+          <div class="alert alert-danger mt-3 mb-0" *ngIf="cancelError">{{ cancelError }}</div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeCancel()" [disabled]="cancelSubmitting">Voltar</button>
+          <button type="button" class="btn btn-danger" (click)="confirmCancel()" [disabled]="cancelSubmitting">
+            Confirmar cancelamento
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

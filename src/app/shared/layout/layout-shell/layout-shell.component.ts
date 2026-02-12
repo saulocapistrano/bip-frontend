@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UserContextService } from '../../../core/auth/user-context.service';
 import { KeycloakService } from 'keycloak-angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-layout-shell',
@@ -15,7 +16,26 @@ export class LayoutShellComponent {
   constructor(
     private readonly userContext: UserContextService,
     private readonly keycloak: KeycloakService,
+    private readonly router: Router,
   ) {}
+
+  ngOnInit(): void {
+    if (this.router.url !== '/') {
+      return;
+    }
+
+    if (this.isAdmin) {
+      void this.router.navigateByUrl('/admin', { replaceUrl: true });
+      return;
+    }
+
+    if (this.isDriver) {
+      void this.router.navigateByUrl('/driver', { replaceUrl: true });
+      return;
+    }
+
+    void this.router.navigateByUrl('/client', { replaceUrl: true });
+  }
 
   toggleSidebar(): void {
     this.sidebarOpen = !this.sidebarOpen;
