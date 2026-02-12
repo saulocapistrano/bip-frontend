@@ -1,6 +1,86 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h2 class="h5 mb-1">Solicitar entrega</h2>
+    <p class="text-muted mb-0">Preencha os dados e envie sua solicitação.</p>
+  </div>
+</div>
+
 <div class="card border-0 shadow-sm">
   <div class="card-body">
-    <h2 class="h5 mb-1">Nova entrega</h2>
-    <p class="text-muted mb-0">Página em construção.</p>
+    <div class="row g-3">
+      <div class="col-12 col-lg-6">
+        <label class="form-label">Endereço de coleta</label>
+        <input
+          class="form-control"
+          type="text"
+          [(ngModel)]="form.pickupAddress"
+          placeholder="Ex.: Rua Pinto Madeira, 88 - Fortaleza"
+        />
+      </div>
+
+      <div class="col-12 col-lg-6">
+        <label class="form-label">Endereço de entrega</label>
+        <input
+          class="form-control"
+          type="text"
+          [(ngModel)]="form.deliveryAddress"
+          placeholder="Ex.: Av Pontes Vieira, 950 - Fortaleza"
+        />
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Descrição</label>
+        <input
+          class="form-control"
+          type="text"
+          [(ngModel)]="form.description"
+          placeholder="Ex.: Caixa de eletrônicos"
+        />
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3">
+        <label class="form-label">Peso (kg)</label>
+        <input class="form-control" type="number" min="0.01" step="0.01" [(ngModel)]="form.weightKg" />
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3">
+        <label class="form-label">Preço ofertado</label>
+        <input class="form-control" type="number" min="0.01" step="0.01" [(ngModel)]="form.offeredPrice" />
+      </div>
+
+      <div class="col-12 col-lg-6 d-flex align-items-end gap-2 justify-content-lg-end">
+        <a
+          class="btn btn-outline-secondary"
+          [href]="mapLink(form.pickupAddress)"
+          target="_blank"
+          rel="noopener"
+          [class.disabled]="!form.pickupAddress"
+        >
+          Ver coleta no mapa
+        </a>
+
+        <a
+          class="btn btn-outline-secondary"
+          [href]="mapLink(form.deliveryAddress)"
+          target="_blank"
+          rel="noopener"
+          [class.disabled]="!form.deliveryAddress"
+        >
+          Ver entrega no mapa
+        </a>
+
+        <button type="button" class="btn btn-primary" (click)="createDelivery()" [disabled]="submitting">
+          Solicitar
+        </button>
+      </div>
+    </div>
+
+    <div class="mt-3" *ngIf="submitError">
+      <div class="alert alert-danger mb-0">{{ submitError }}</div>
+    </div>
+
+    <div class="mt-3" *ngIf="submitSuccess">
+      <div class="alert alert-success mb-0">{{ submitSuccess }}</div>
+    </div>
   </div>
 </div>
