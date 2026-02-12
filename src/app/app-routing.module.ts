@@ -1,7 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { RoleRedirectComponent } from './core/auth/role-redirect/role-redirect.component';
+import { roleRedirectGuard } from './core/auth/role-redirect/role-redirect.guard';
 
 const routes: Routes = [
+  { path: '', component: RoleRedirectComponent, canActivate: [roleRedirectGuard], pathMatch: 'full' },
   {
     path: 'client',
     loadChildren: () =>
@@ -17,8 +20,7 @@ const routes: Routes = [
     loadChildren: () =>
       import('./features/admin/admin.module').then(m => m.AdminModule),
   },
-  { path: '', redirectTo: '/client', pathMatch: 'full' },
-  { path: '**', redirectTo: '/client' },
+  { path: '**', component: RoleRedirectComponent, canActivate: [roleRedirectGuard] },
 ];
 
 @NgModule({
