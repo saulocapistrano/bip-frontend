@@ -1,6 +1,13 @@
 {
+  "/api/ws": {
+    "target": "http://127.0.0.1:8087",
+    "secure": false,
+    "changeOrigin": true,
+    "ws": true,
+    "logLevel": "debug"
+  },
   "/api": {
-    "target": "http://localhost:8087",
+    "target": "http://127.0.0.1:8087",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
