@@ -30,6 +30,24 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, bip-frontend');
+    expect(compiled.querySelector('.navbar-brand')?.textContent).toContain('BIP');
+  });
+
+  it('should render main navigation links', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const links = Array.from(compiled.querySelectorAll('a.nav-link')).map((a) => a.textContent?.trim());
+    expect(links).toContain('Cliente');
+    expect(links).toContain('Entregador');
+    expect(links).toContain('Admin');
+  });
+
+  it('should render router outlet', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
 });

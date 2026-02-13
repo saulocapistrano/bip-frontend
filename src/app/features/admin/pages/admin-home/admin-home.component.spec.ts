@@ -20,4 +20,9 @@ describe('AdminHomeComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should render placeholder content', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('admin-home works!');
+  });
 });
