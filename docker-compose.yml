@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  bip-frontend:
+    container_name: bip-frontend
+    build:
+      context: .
+    image: bip-frontend:latest
+    ports:
+      - "4200:80"
+    networks:
+      - bip-network
+
+networks:
+  bip-network:
+    external: true
+    name: bip-network
